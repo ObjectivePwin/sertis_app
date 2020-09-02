@@ -49,7 +49,7 @@ func setupDB() error {
 }
 
 func setupRouter() *gin.Engine {
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
@@ -60,7 +60,7 @@ func setupRouter() *gin.Engine {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	zap.L().Info("Start Listen at Port 5550")
+	zap.L().Info("Start Listen at Port 8880")
 	router.POST("/signup", postSignUp)
 	router.POST("/signin", postSignIn)
 
