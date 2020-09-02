@@ -1,0 +1,31 @@
+
+version: '3.3'
+services:
+    mariadb-master:
+        image: bitnami/mariadb:latest
+        container_name: mariadb-master
+        ports:
+            - 3306:3306
+        expose:
+            - 5550
+        volumes:
+            - ./mariadb-persistence:/bitnami/mariadb
+        environment:
+            - "MYSQL_ROOT_HOST=%"
+            - MARIADB_ROOT_PASSWORD=hnfdxy9c
+            - MARIADB_USER=sertis
+            - MARIADB_PASSWORD=sertis
+            - MARIADB_DATABASE=sertis
+            - MARIADB_EXTRA_FLAGS=--max_connections=5001 --event_scheduler=ON --expire-logs-days=1 --wait-timeout=3600
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        container_name: review_app_php
+        links:
+            - mariadb-master:db
+        ports:
+            - 8000:80
+        environment:
+            MYSQL_USERNAME: sertis
+            MYSQL_ROOT_PASSWORD: hnfdxy9c
+            PMA_HOST: db
+    
