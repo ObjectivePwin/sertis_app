@@ -48,3 +48,21 @@ func TestVerifyUserAndPassword(t *testing.T) {
 	assert.NotZero(t, id)
 	assert.NoError(t, err)
 }
+
+func TestCreateCard(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	card := model.Card{UserID: 1, Name: "test", Status: "n/a", Category: "cat", Content: "content"}
+	query := "INSERT INTO `card`"
+
+	prep := mock.ExpectPrepare(query)
+	prep.ExpectExec().WithArgs(1, "test", "n/a", "content", "cat").WillReturnResult(sqlmock.NewResult(1, 1))
+
+	errCreateCard := CreateCard(db, card)
+	assert.NoError(t, errCreateCard)
+}

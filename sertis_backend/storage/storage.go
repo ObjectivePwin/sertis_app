@@ -74,3 +74,16 @@ func VerifyUserAndPassword(db *sql.DB, credentials model.Credentials) (int, erro
 	}
 	return id, nil
 }
+
+//CreateCard is a function that insert card to database
+func CreateCard(db *sql.DB, card model.Card) error {
+	stmt, err := db.Prepare("INSERT INTO `card` (`user_id`, `name`, `status`, `content`, `category`) VALUES (?, ?, ?, ?, ?)")
+	_, err = stmt.Exec(card.UserID, card.Name, card.Status, card.Content, card.Category)
+
+	defer stmt.Close()
+	if err != nil {
+		zap.S().Info("CreateCard insert error ", err)
+		return err
+	}
+	return nil
+}

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,6 +27,34 @@ func NewBlog(db *sql.DB) *Blog {
 	}
 
 	return &blog
+}
+
+//VerifyJWTToken is a function to verify token
+func (b *Blog) VerifyJWTToken(token string) (*model.JWTClaims, error) {
+	// Initialize a new instance of `Claims`
+	claims := &model.JWTClaims{}
+
+	// Parse the JWT string and store the result in `claims`.
+	// Note that we are passing the key in this method as well. This method will return an error
+	// if the token is invalid (if it has expired according to the expiry time we set on sign in),
+	// or if the signature does not match
+	tkn, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return b.jwtSecketKey, nil
+	})
+	if err != nil {
+		zap.L().Debug("Token is in valid")
+		if err == jwt.ErrSignatureInvalid {
+			return nil, errors.New("Token is in valid")
+		}
+		return nil, errors.New("Token is in valid")
+	}
+	if !tkn.Valid {
+		zap.L().Debug("Token is in valid")
+		return nil, errors.New("Token is in valid")
+	}
+
+	zap.S().Debug("username ", claims.Username)
+	return claims, nil
 }
 
 //CreateAccount is a function to check already have account if not then create it
@@ -69,4 +98,14 @@ func (b *Blog) LoginAddCreateAccessToken(creds model.Credentials) (string, error
 	// Create the JWT string
 	tokenString, err := token.SignedString(b.jwtSecketKey)
 	return tokenString, nil
+}
+
+//CreateNewCard is a function create new card
+func (b *Blog) CreateNewCard(card model.Card) error {
+	err := storage.CreateCard(b.db, card)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

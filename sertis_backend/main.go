@@ -98,6 +98,30 @@ func postSignIn(c *gin.Context) {
 }
 
 func postAddNewCard(c *gin.Context) {
+	bearerScheme := "Bearer "
+	authHeader := c.GetHeader("Authorization")
+	token := authHeader[len(bearerScheme):]
+
+	claims, err := blog.VerifyJWTToken(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, createResponse(err.Error()))
+	}
+
+	card := model.Card{}
+	if err := c.ShouldBindJSON(&card); err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+	//set user id of card
+	card.UserID = claims.ID
+	errCreateCard := blog.CreateNewCard(card)
+	if errCreateCard != nil {
+		c.JSON(http.StatusOK, createResponse(err.Error()))
+
+	} else {
+		c.JSON(http.StatusOK, createResponse(""))
+	}
 
 }
 
