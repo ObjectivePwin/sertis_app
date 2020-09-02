@@ -63,7 +63,7 @@ func setupRouter() *gin.Engine {
 	zap.L().Info("Start Listen at Port 8880")
 	router.POST("/signup", postSignUp)
 	router.POST("/signin", postSignIn)
-
+	router.POST("/addnewcard", postAddNewCard)
 	return router
 }
 
@@ -83,6 +83,21 @@ func postSignUp(c *gin.Context) {
 }
 
 func postSignIn(c *gin.Context) {
+	creds := model.Credentials{}
+	if err := c.ShouldBindJSON(&creds); err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+	accessToken, err := blog.LoginAddCreateAccessToken(creds)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, createResponse(err.Error()))
+	} else {
+		c.JSON(http.StatusOK, createResponseWithAccessToken(accessToken))
+	}
+}
+
+func postAddNewCard(c *gin.Context) {
 
 }
 
@@ -95,5 +110,13 @@ func createResponse(err string) model.ResponseAPI {
 		resAPI.Success = true
 	}
 
+	return resAPI
+}
+
+func createResponseWithAccessToken(accessToken string) model.ResponseAPI {
+	resAPI := createResponse("")
+	if accessToken != "" {
+		resAPI.AccessToken = accessToken
+	}
 	return resAPI
 }
