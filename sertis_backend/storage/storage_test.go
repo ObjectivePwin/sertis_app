@@ -66,3 +66,23 @@ func TestCreateCard(t *testing.T) {
 	errCreateCard := CreateCard(db, card)
 	assert.NoError(t, errCreateCard)
 }
+
+func TestGetAllCard(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	query := "SELECT c.`id`, `username`, `name`, `status`, `content`, `category` FROM `card` c, user u WHERE c.user_id = u.id"
+
+	rows := sqlmock.NewRows([]string{"c.id", "username", "name", "status", "content", "category"}).AddRow(1, "jojo", "test", "n/a", "content", "cat")
+
+	mock.ExpectQuery(query).WillReturnRows(rows)
+
+	cards, err := GetAllCard(db)
+	assert.NotEmpty(t, cards)
+	assert.NoError(t, err)
+	assert.Len(t, cards, 1)
+}

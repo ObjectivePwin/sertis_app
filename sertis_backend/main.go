@@ -64,6 +64,7 @@ func setupRouter() *gin.Engine {
 	router.POST("/signup", postSignUp)
 	router.POST("/signin", postSignIn)
 	router.POST("/addnewcard", postAddNewCard)
+	router.GET("/blog", getBlog)
 	return router
 }
 
@@ -118,11 +119,23 @@ func postAddNewCard(c *gin.Context) {
 	errCreateCard := blog.CreateNewCard(card)
 	if errCreateCard != nil {
 		c.JSON(http.StatusOK, createResponse(err.Error()))
-
 	} else {
 		c.JSON(http.StatusOK, createResponse(""))
 	}
+}
 
+func getBlog(c *gin.Context) {
+	bearerScheme := "Bearer "
+	authHeader := c.GetHeader("Authorization")
+	token := authHeader[len(bearerScheme):]
+
+	_, err := blog.VerifyJWTToken(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, createResponse(err.Error()))
+	}
+
+	cards := blog.GetAllCard()
+	c.JSON(http.StatusOK, createResponseWithCards(cards))
 }
 
 func createResponse(err string) model.ResponseAPI {
@@ -142,5 +155,12 @@ func createResponseWithAccessToken(accessToken string) model.ResponseAPI {
 	if accessToken != "" {
 		resAPI.AccessToken = accessToken
 	}
+	return resAPI
+}
+
+func createResponseWithCards(cards []model.Card) model.ResponseAPI {
+	resAPI := createResponse("")
+	resAPI.Cards = cards
+
 	return resAPI
 }

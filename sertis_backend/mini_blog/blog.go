@@ -100,7 +100,7 @@ func (b *Blog) LoginAddCreateAccessToken(creds model.Credentials) (string, error
 	return tokenString, nil
 }
 
-//CreateNewCard is a function create new card
+//CreateNewCard is a function that create new card
 func (b *Blog) CreateNewCard(card model.Card) error {
 	err := storage.CreateCard(b.db, card)
 
@@ -108,4 +108,14 @@ func (b *Blog) CreateNewCard(card model.Card) error {
 		return err
 	}
 	return nil
+}
+
+//GetAllCard is a function that get cards
+func (b *Blog) GetAllCard() []model.Card {
+	cards, err := storage.GetAllCard(b.db)
+	if err != nil {
+		zap.S().Debug("GetAllCard ", err)
+		return []model.Card{}
+	}
+	return cards
 }

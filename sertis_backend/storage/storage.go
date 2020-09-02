@@ -87,3 +87,24 @@ func CreateCard(db *sql.DB, card model.Card) error {
 	}
 	return nil
 }
+
+//GetAllCard is a function that query all card from database
+func GetAllCard(db *sql.DB) ([]model.Card, error) {
+	rows, err := db.Query("SELECT c.`id`, `username`, `name`, `status`, `content`, `category` FROM `card` c, user u WHERE c.user_id = u.id")
+	if err != nil {
+		zap.S().Info("CreateCard insert error ", err)
+		return nil, err
+	}
+
+	cards := []model.Card{}
+	for rows.Next() {
+		card := model.Card{}
+		rowError := rows.Scan(&card.ID, &card.Author, &card.Name, &card.Status, &card.Content, &card.Category)
+		if rowError != nil {
+			return nil, rowError
+		}
+		cards = append(cards, card)
+	}
+
+	return cards, nil
+}
