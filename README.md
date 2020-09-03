@@ -1,5 +1,5 @@
 # sertis_app
-## 1. Run docker-compose up
+## 1. Run With Commard ***docker-compose build && docker-compose up***
 ### 1.1 docker-compose will build mariaDB, phpmyadmin and sertis_app backend
 
 ## 2. Sertis_app will Run on localhost:8880 and Content-Type = application/json
@@ -29,7 +29,7 @@
     {
         "success": true,
         "error_message": "",
-        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiam9qbyIsImV4cCI6MTU5OTExNTA2M30.TCfUJmcBmhDEKw6w8em6U3CtLe_pTzQ3greweuZLXIM"
+        "access_token": "**AccessToken**"
     }
 
 #### 2.1.3 localhost:8880/addnewcard ***POST Method***
