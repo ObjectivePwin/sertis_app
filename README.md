@@ -1,7 +1,7 @@
 # sertis_app
-## 1. Run With Commard ***docker-compose build && docker-compose up***
-### 1.1 docker-compose will build mariaDB, phpmyadmin and sertis_app backend
-
+## 1. Run commard to deploy mariaDB, phpmyadmin and sertis_app backend
+    `docker-compose build && docker-compose up`
+    
 ## 2. Sertis_app will Run on localhost:8880 and Content-Type = application/json
 ### 2.1 Sertis API will contain
 
