@@ -53,7 +53,6 @@ func (b *Blog) VerifyJWTToken(token string) (*model.JWTClaims, error) {
 		return nil, errors.New("Token is in valid")
 	}
 
-	zap.S().Debug("username ", claims.Username)
 	return claims, nil
 }
 

@@ -77,14 +77,20 @@ func VerifyUserAndPassword(db *sql.DB, credentials model.Credentials) (int, erro
 
 //CreateCard is a function that insert card to database
 func CreateCard(db *sql.DB, card model.Card) error {
-	stmt, err := db.Prepare("INSERT INTO `card` (`user_id`, `name`, `status`, `content`, `category`) VALUES (?, ?, ?, ?, ?)")
-	_, err = stmt.Exec(card.UserID, card.Name, card.Status, card.Content, card.Category)
+	query := "INSERT INTO `card` (`user_id`, `name`, `status`, `content`, `category`) VALUES (?, ?, ?, ?, ?)"
+	result, err := db.Exec(query, card.UserID, card.Name, card.Status, card.Content, card.Category)
 
-	defer stmt.Close()
 	if err != nil {
 		zap.S().Info("CreateCard insert error ", err)
 		return err
 	}
+
+	rowEffect, _ := result.RowsAffected()
+	if rowEffect == 0 {
+		zap.S().Info("CreateCard insert error ", err)
+		return errors.New("Create Card Error")
+	}
+
 	return nil
 }
 
@@ -111,26 +117,37 @@ func GetAllCard(db *sql.DB) ([]model.Card, error) {
 
 //UpdateCard is a function that update card in database
 func UpdateCard(db *sql.DB, card model.Card) error {
-	stmt, err := db.Prepare("UPDATE card SET name = ?, status = ?, content = ?, category = ? WHERE id = ? and user_id = ?")
-	_, err = stmt.Exec(card.Name, card.Status, card.Content, card.Category, card.ID, card.UserID)
+	query := "UPDATE card SET name = ?, status = ?, content = ?, category = ? WHERE id = ? and user_id = ?"
+	result, err := db.Exec(query, card.Name, card.Status, card.Content, card.Category, card.ID, card.UserID)
 
-	defer stmt.Close()
 	if err != nil {
-		zap.S().Info("UpdateCard insert error ", err)
+		zap.S().Info("UpdateCard UPDATE error ", err)
 		return err
 	}
+
+	rowEffect, _ := result.RowsAffected()
+	if rowEffect == 0 {
+		zap.S().Info("Not Found card to update")
+		return errors.New("Not Found card to update")
+	}
+
 	return nil
 }
 
 //DeleteCard is a function that delete card in database
 func DeleteCard(db *sql.DB, cardID int, userID int) error {
-	stmt, err := db.Prepare("DELETE FROM `card` WHERE id = ? and user_id = ?")
-	_, err = stmt.Exec(cardID, userID)
+	query := "DELETE FROM `card` WHERE id = ? and user_id = ?"
+	result, err := db.Exec(query, cardID, userID)
 
-	defer stmt.Close()
 	if err != nil {
-		zap.S().Info("DeleteCard insert error ", err)
+		zap.S().Info("DeleteCard DELETE error ", err)
 		return err
+	}
+
+	rowEffect, _ := result.RowsAffected()
+	if rowEffect == 0 {
+		zap.S().Info("Not Found card to delete")
+		return errors.New("Not Found card to delete")
 	}
 	return nil
 }
