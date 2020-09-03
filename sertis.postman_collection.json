@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "8bb16c24-4dc2-44ef-9d7b-200c74510676",
+		"name": "sertis",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "signup",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "AIzaSyDiGTMBtK9iuhTcLFL89MB94NeDd_cDH8E",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"jojo\",\n    \"password\": \"129222\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8880/signup",
+					"host": [
+						"localhost"
+					],
+					"port": "8880",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"jojo\",\n    \"password\": \"129222\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8880/signin",
+					"host": [
+						"localhost"
+					],
+					"port": "8880",
+					"path": [
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addnewcard",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiam9qbyIsImV4cCI6MTU5OTA4Mzk5MX0.q_p0F8-3Fo_Rsay_Z09BipMQJFDerN3zL6zK2UGY2AA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"NVIDIA เปิดตัว RTX 1O\",\n    \"status\": \"n/a\",\n    \"content\": \"จีพียูเข้าถึงสตอเรจโดยตรง ใช้ DirectStorage API ของไมโครซอฟท์\",\n    \"category\":\"Technology\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8880/addnewcard",
+					"host": [
+						"localhost"
+					],
+					"port": "8880",
+					"path": [
+						"addnewcard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "blog",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiam9qbyIsImV4cCI6MTU5OTExNTA2M30.TCfUJmcBmhDEKw6w8em6U3CtLe_pTzQ3greweuZLXIM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8880/blog",
+					"host": [
+						"localhost"
+					],
+					"port": "8880",
+					"path": [
+						"blog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updatecard",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiam9qbyIsImV4cCI6MTU5OTA4MjAxMH0.syCE1fdWfk3qww3HYTd_emwoPnif2ntxxbglTLOQFN0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\" : 1,\n    \"name\": \"NVIDIA เปิดตัว RTX 1O\",\n    \"status\": \"n/a\",\n    \"content\": \"จีพียูเข้าถึงสตอเรจโดยตรง ใช้ DirectStorage API ของไมโครซอฟท์\",\n    \"category\":\"Nvidia\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8880/updatecard",
+					"host": [
+						"localhost"
+					],
+					"port": "8880",
+					"path": [
+						"updatecard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deletecard",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoiam9qbyIsImV4cCI6MTU5OTA4Mzk5MX0.q_p0F8-3Fo_Rsay_Z09BipMQJFDerN3zL6zK2UGY2AA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8880/deletecard/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8880",
+					"path": [
+						"deletecard",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
