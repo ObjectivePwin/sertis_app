@@ -6,6 +6,7 @@ import (
 	"net/http"
 	miniblog "sertis_app/mini_blog"
 	"sertis_app/model"
+	"strconv"
 	"time"
 
 	storage "sertis_app/storage"
@@ -65,13 +66,15 @@ func setupRouter() *gin.Engine {
 	router.POST("/signin", postSignIn)
 	router.POST("/addnewcard", postAddNewCard)
 	router.GET("/blog", getBlog)
+	router.POST("/updatecard", postUpdateCard)
+	router.GET("/deletecard/:cardID", postDeleteCard)
 	return router
 }
 
 func postSignUp(c *gin.Context) {
 	creds := model.Credentials{}
 	if err := c.ShouldBindJSON(&creds); err != nil {
-		c.Status(http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, createResponse(err.Error()))
 		return
 	}
 
@@ -86,7 +89,7 @@ func postSignUp(c *gin.Context) {
 func postSignIn(c *gin.Context) {
 	creds := model.Credentials{}
 	if err := c.ShouldBindJSON(&creds); err != nil {
-		c.Status(http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, createResponse(err.Error()))
 		return
 	}
 
@@ -99,13 +102,15 @@ func postSignIn(c *gin.Context) {
 }
 
 func postAddNewCard(c *gin.Context) {
-	bearerScheme := "Bearer "
-	authHeader := c.GetHeader("Authorization")
-	token := authHeader[len(bearerScheme):]
+	token := getTokenFromHeader(c)
+	if token == "" {
+		return
+	}
 
 	claims, err := blog.VerifyJWTToken(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, createResponse(err.Error()))
+		return
 	}
 
 	card := model.Card{}
@@ -132,10 +137,83 @@ func getBlog(c *gin.Context) {
 	_, err := blog.VerifyJWTToken(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, createResponse(err.Error()))
+		return
 	}
 
 	cards := blog.GetAllCard()
 	c.JSON(http.StatusOK, createResponseWithCards(cards))
+}
+
+func postUpdateCard(c *gin.Context) {
+	token := getTokenFromHeader(c)
+	if token == "" {
+		return
+	}
+
+	claims, err := blog.VerifyJWTToken(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, createResponse(err.Error()))
+		return
+	}
+
+	card := model.Card{}
+	if err := c.ShouldBindJSON(&card); err != nil {
+		c.JSON(http.StatusBadRequest, createResponse(err.Error()))
+		return
+	}
+
+	if card.ID == 0 {
+		c.JSON(http.StatusBadRequest, createResponse("Invalid Json"))
+		return
+	}
+
+	card.UserID = claims.ID
+	errUpdateCard := blog.UpdateCard(card)
+	if errUpdateCard != nil {
+		c.JSON(http.StatusOK, createResponse(errUpdateCard.Error()))
+	} else {
+		c.JSON(http.StatusOK, createResponse(""))
+	}
+}
+
+func postDeleteCard(c *gin.Context) {
+	token := getTokenFromHeader(c)
+	if token == "" {
+		return
+	}
+
+	claims, err := blog.VerifyJWTToken(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, createResponse(err.Error()))
+		return
+	}
+
+	id := c.Param("cardID")
+	cardID, errCardID := strconv.ParseInt(id, 10, 32)
+	if errCardID != nil {
+		c.JSON(http.StatusBadRequest, createResponse("Bad Request"))
+		return
+	}
+
+	errDeleteCard := blog.DeleteCard(int(cardID), claims.ID)
+	if errDeleteCard != nil {
+		c.JSON(http.StatusOK, createResponse(errDeleteCard.Error()))
+	} else {
+		c.JSON(http.StatusOK, createResponse(""))
+	}
+
+}
+
+func getTokenFromHeader(c *gin.Context) string {
+	bearerScheme := "Bearer "
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, createResponse("Not have authorized"))
+		return ""
+		// return "", errors.New("Not have authorized")
+	}
+	token := authHeader[len(bearerScheme):]
+	return token
 }
 
 func createResponse(err string) model.ResponseAPI {

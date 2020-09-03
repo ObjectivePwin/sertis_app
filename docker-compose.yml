@@ -19,7 +19,7 @@ services:
             - MARIADB_EXTRA_FLAGS=--max_connections=5001 --event_scheduler=ON --expire-logs-days=1 --wait-timeout=3600
     phpmyadmin:
         image: phpmyadmin/phpmyadmin:latest
-        container_name: review_app_php
+        container_name: sertis_app_phpmyadmin
         links:
             - mariadb-master:db
         ports:
@@ -28,4 +28,16 @@ services:
             MYSQL_USERNAME: sertis
             MYSQL_ROOT_PASSWORD: hnfdxy9c
             PMA_HOST: db
-    
+    sertis_app:
+        build: .
+        container_name: sertis_app
+        # network_mode: host
+        ports:
+            - 8880:8880
+        expose:
+            - 8880
+        command: sh -c "/wait && ./sertis_app"
+
+        environment:
+            WAIT_HOSTS: mariadb-master:3306
+            WAIT_AFTER_HOSTS: 15

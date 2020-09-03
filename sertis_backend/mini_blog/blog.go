@@ -119,3 +119,21 @@ func (b *Blog) GetAllCard() []model.Card {
 	}
 	return cards
 }
+
+//UpdateCard is a function that update card
+func (b *Blog) UpdateCard(card model.Card) error {
+	err := storage.UpdateCard(b.db, card)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//DeleteCard is a function that delete card
+func (b *Blog) DeleteCard(cardID int, userID int) error {
+	err := storage.DeleteCard(b.db, cardID, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

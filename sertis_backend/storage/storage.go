@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var dataSourceName = "sertis:sertis@tcp(localhost:3306)/sertis"
+var dataSourceName = "sertis:sertis@tcp(mariadb-master:3306)/sertis"
 
 //CreateDBConnection is a function to create db connection
 func CreateDBConnection() (*sql.DB, error) {
@@ -107,4 +107,30 @@ func GetAllCard(db *sql.DB) ([]model.Card, error) {
 	}
 
 	return cards, nil
+}
+
+//UpdateCard is a function that update card in database
+func UpdateCard(db *sql.DB, card model.Card) error {
+	stmt, err := db.Prepare("UPDATE card SET name = ?, status = ?, content = ?, category = ? WHERE id = ? and user_id = ?")
+	_, err = stmt.Exec(card.Name, card.Status, card.Content, card.Category, card.ID, card.UserID)
+
+	defer stmt.Close()
+	if err != nil {
+		zap.S().Info("UpdateCard insert error ", err)
+		return err
+	}
+	return nil
+}
+
+//DeleteCard is a function that delete card in database
+func DeleteCard(db *sql.DB, cardID int, userID int) error {
+	stmt, err := db.Prepare("DELETE FROM `card` WHERE id = ? and user_id = ?")
+	_, err = stmt.Exec(cardID, userID)
+
+	defer stmt.Close()
+	if err != nil {
+		zap.S().Info("DeleteCard insert error ", err)
+		return err
+	}
+	return nil
 }

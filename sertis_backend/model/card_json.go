@@ -8,5 +8,5 @@ type Card struct {
 	Status   string `json:"status" db:"status"`
 	Content  string `json:"content" db:"content"`
 	Category string `json:"category" db:"category"`
-	Author   string `json:"author,omitempty" db:"status"`
+	Author   string `json:"author,omitempty"`
 }
