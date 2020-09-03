@@ -130,9 +130,10 @@ func postAddNewCard(c *gin.Context) {
 }
 
 func getBlog(c *gin.Context) {
-	bearerScheme := "Bearer "
-	authHeader := c.GetHeader("Authorization")
-	token := authHeader[len(bearerScheme):]
+	token := getTokenFromHeader(c)
+	if token == "" {
+		return
+	}
 
 	_, err := blog.VerifyJWTToken(token)
 	if err != nil {
